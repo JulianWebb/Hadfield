@@ -1,0 +1,6 @@
+[server]
+	host = "example.org"
+	port = 70
+[gopher]
+	documentRoot = "./gopher/documents"
+	fileRoot  = "./gopher/files"
