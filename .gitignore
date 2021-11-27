@@ -1,0 +1,9 @@
+node_modules/
+gopher/
+
+.env
+*.toml
+*.sqlite
+*.db
+
+!configuration.sample.toml

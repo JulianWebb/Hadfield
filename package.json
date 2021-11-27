@@ -1,0 +1,35 @@
+{
+  "name": "hadfield",
+  "version": "0.1.0",
+  "description": "Document Based Gopher Server Written In Javascript",
+  "main": "source/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulianWebb/hadfield.git"
+  },
+  "keywords": [
+    "gopher",
+    "server",
+    "document",
+    "json",
+    "toml"
+  ],
+  "author": "Julian Webb",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JulianWebb/hadfield/issues"
+  },
+  "homepage": "https://github.com/JulianWebb/hadfield#readme",
+  "devDependencies": {
+    "dotenv": "^10.0.0"
+  },
+  "dependencies": {
+    "@types/node": "^16.11.7",
+    "better-sqlite3": "^7.4.4",
+    "gray-matter": "^4.0.3",
+    "toml-require": "^1.2.0"
+  }
+}
