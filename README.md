@@ -41,6 +41,8 @@ The keyvalue pairs of this table are whatever you wish to send in your `caps.txt
 
 Todo: Explain
 
+Check the [Entity Types](https://github.com/JulianWebb/Hadfield/wiki/Entity-Types) wiki page for more information 
+
 ### Running the project
 
 Simply use the command `npm start` to run Hadfield
