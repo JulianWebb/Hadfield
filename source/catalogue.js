@@ -130,7 +130,7 @@ class Catalogue {
 		}
 
 		const selectorMinusOne = selector.substring(0, selector.lastIndexOf("/")) || "/";
-		console.log(typeof selectorMinusOne);
+
 		if (!this.entries[selectorMinusOne]) {
 			return {
 				type: "failure",
