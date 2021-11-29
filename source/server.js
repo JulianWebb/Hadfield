@@ -51,10 +51,10 @@ function SocketHandler(socket) {
 		return new Promise((resolve, _) => {
 			if (Array.isArray(message)) {
 				message = message.reduce((accumulator, current) => {
-					return accumulator + current + "\r\n";
+					return accumulator + current;
 				}, "")
 			} else {
-				message = message.toString() + "\r\n";
+				message = message.toString();
 			}
 
 			this.socket.write(message, 'ascii', resolve(this));
