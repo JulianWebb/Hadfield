@@ -11,7 +11,7 @@ async function GopherConstructor(configuration) {
 		port: configuration.port
 	});
 
-	this.server = await Server({
+	const server = await Server({
 		host: configuration.host,
 		port: configuration.port,
 		assetRoot: configuration.assetRoot
@@ -24,12 +24,23 @@ async function GopherConstructor(configuration) {
 class Gopher {
 	constructor (configuration, catalogue, server) {
 		this.configuration = configuration;
+		this.capabilities = configuration.capabilities;
 		this.catalogue = catalogue;
 		this.server = server;
 		this.server.on('message', this.serve.bind(this));
 	}
 	
 	serve(message, socket) {
+		console.log(`Incoming message: `, message);
+		if (message == "caps.txt") {
+			let response;
+			for (const key in this.capabilities) {
+				response += key + this.capabilities[key].toString() + "\r\n";
+			}
+			socket.write(response)
+				.then(socket => {})//socket.end());
+		}
+
 		if (message.startsWith("\u0009")) {
 			this.reply(`3GopherPlus not current implemented	Err	${this.host}	${this.port}`, socket);
 			return void 0;

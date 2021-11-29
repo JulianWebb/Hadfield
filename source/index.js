@@ -9,7 +9,8 @@ async function Hadfield() {
 		documentRoot: Path.join(process.cwd(), configuration.gopher.documentRoot),
 		assetRoot: Path.join(process.cwd(), configuration.gopher.assetRoot),
 		host: configuration.server.host,
-		port: configuration.server.port
+		port: configuration.server.port,
+		capabilities: configuration.gopher.capabilities
 	})
 
 	gopher.listen()
