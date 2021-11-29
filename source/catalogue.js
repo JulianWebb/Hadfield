@@ -142,11 +142,19 @@ class Catalogue {
 
 		const itemName = selector.substring(selector.lastIndexOf("/") + 1);
 		const item = this.entries[selectorMinusOne].entries[itemName];
+		if (item) {
+			return {
+				type: item.type,
+				item
+			}
+		}
 
 		return {
-			type: item.type,
-			item
-		}
+				type: "failure",
+				item: {
+					description: "Nothing found for selector"
+				}
+			};
 
 	}
 }
