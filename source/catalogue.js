@@ -130,6 +130,41 @@ class Catalogue {
 			}
 		}
 	}
+
+	getItem(selector) {
+		if (selector == "") {
+			return {
+				type: "menu",
+				item: this.entries["/"]
+			};
+		}
+		if (this.entries[selector]) {
+			return {
+				type: "menu",
+				item: this.entries[selector]
+			};
+		}
+
+		const selectorMinusOne = selector.substring(0, selector.lastIndexOf("/")) || "/";
+		console.log(typeof selectorMinusOne);
+		if (!this.entries[selectorMinusOne]) {
+			return {
+				type: "failure",
+				item: {
+					description: "Nothing found for selector"
+				}
+			};
+		}
+
+		const itemName = selector.substring(selector.lastIndexOf("/") + 1);
+		const item = this.entries[selectorMinusOne].entries[itemName];
+
+		return {
+			type: item.type,
+			item
+		}
+
+	}
 }
 
 module.exports = CatalogueConstructor;
