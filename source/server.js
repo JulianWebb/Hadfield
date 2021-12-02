@@ -27,6 +27,10 @@ class SocketManager extends EventEmitter {
 				}
 
 				return this.emit("message", message, socketHandler);
+			});
+
+			socketHandler.socket.on("error", error => {
+				console.log('Socket Error: ', error.toString());
 			})
 		})
 	}
