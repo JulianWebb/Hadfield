@@ -6,15 +6,15 @@ const Types = require('./types');
 
 async function GopherConstructor(configuration) {
 	const catalogue = await Catalogue({
-		documentRoot: configuration.documentRoot,
-		host: configuration.host,
-		port: configuration.port
+		documentRoot: Path.join(process.cwd(), configuration.gopher.documentRoot),
+		host: configuration.gopher.host || configuration.server.host,
+		port: configuration.gopher.port || configuration.server.port
 	});
 
 	const server = await Server({
-		host: configuration.host,
-		port: configuration.port,
-		assetRoot: configuration.assetRoot
+		host: configuration.server.host,
+		port: configuration.server.port,
+		assetRoot: Path.join(process.cwd(), configuration.gopher.assetRoot)
 	});
 	const gopher = new Gopher(configuration, catalogue, server);
 
