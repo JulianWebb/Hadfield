@@ -1,10 +1,11 @@
 const Filesystem = require('fs');
 const Path = require('path');
+const { loadTOML } = require('./toml');
 
-const Types = require('./types');
+const EntryTypes = require('./types/entryTypes');
 
-const TAB = "	";
-const NEWLINE = "\r\n";
+const Entry = require('./catalogue/entry');
+const Menu = require('./catalogue/menu');
 
 async function CatalogueConstructor(configuration) {
 	const catalogue = new Catalogue({
@@ -17,72 +18,6 @@ async function CatalogueConstructor(configuration) {
 
 	return catalogue;
 };
-
-class Document {
-	constructor(properties, root) {
-		this.properties = properties;
-		this.root = root;
-	}
-
-	get type() {
-		return this.properties.type;
-	}
-
-	get description() {
-		return this.properties.description;
-	}
-
-	get entry() {
-		if (!this.generatedEntry) {
-			const selector = this.properties.selector? 
-			Path.join(this.root, this.properties.selector):
-			"";
-
-			switch (this.type) {
-				case Types.TextFile:
-				case Types.Directory:
-				case Types.Information:
-					this.generatedEntry = this.type + this.description + TAB + selector + TAB;
-					break;
-				default:
-					this.generatedEntry = Types.ErrorCondition + "This Entry Type is not implemented" + TAB + "Err" + TAB;
-			}
-		}
-
-		return this.generatedEntry;
-	}
-}
-
-class Menu {
-	constructor(host, port) {
-		this.host = host;
-		this.port = port;
-		this.entries = {};
-		this.end = this.host + TAB + this.port + NEWLINE;
-	}
-
-	addEntry(name, document) {
-		this.entries[name] = document;
-	}
-
-	get display() {
-		if (!this.generatedDisplay) {
-			this.generatedDisplay = Object.keys(this.entries)
-				.sort((scooby, shaggy) => {
-					const scoobyWeight = this.entries[scooby].weight || 0;
-					const shaggyWeight = this.entries[shaggy].weight || 0;
-
-					const rawDifference = shaggyWeight - scoobyWeight;
-					const clampedDifference = Math.min(Math.max(rawDifference, -1, 1));
-					return clampedDifference;
-				}).reduce((accumulator, current) => {
-					return accumulator + this.entries[current].entry + this.end;
-				}, "");
-		}
-
-		return this.generatedDisplay;
-	}
-}
 
 class Catalogue {
 	constructor(configuration) {
@@ -105,9 +40,9 @@ class Catalogue {
 
 			const [ name ] = entry.name.split('.');
 			const properties = require(Path.join(directory, entry.name));
-			this.entries[gopherPath].addEntry(name, new Document(properties, gopherPath));
+			this.entries[gopherPath].addEntry(name, new Entry(properties, gopherPath));
 
-			if (properties.type == Types.Directory) {
+			if (properties.type == EntryTypes.Directory) {
 				const childDirectory = Path.join(directory, properties.directory);
 				const childGopherPath = Path.join(gopherPath, properties.directory);
 				this.populate(childDirectory, childGopherPath);
