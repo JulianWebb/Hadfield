@@ -4,93 +4,80 @@ const { loadTOML } = require('./toml');
 
 const EntryTypes = require('./types/entryTypes');
 
-const Entry = require('./catalogue/entry');
 const Menu = require('./catalogue/menu');
+const Entry = require('./catalogue/entry');
 
-async function CatalogueConstructor(configuration) {
-	const catalogue = new Catalogue({
-		documentRoot: configuration.documentRoot,
-		host: configuration.host,
-		port: configuration.port
-	});
-
-	catalogue.populate(catalogue.documentRoot);
-
+async function CatalogueConstructor(rootDirectory, assetDirectory, host, port, newline, separator) {
+	const catalogue = new Catalogue(rootDirectory, assetDirectory, host, port, newline, separator);
+	
 	return catalogue;
-};
+}
 
 class Catalogue {
-	constructor(configuration) {
-		this.documentRoot = configuration.documentRoot;
-		this.host = configuration.host;
-		this.port = configuration.port;
-		this.entries = {};
+	selectors = {
+		'/': {
+			type: EntryTypes.Directory,
+			selector: "/"
+		}
+	};
+	menus = {};
+
+	constructor(rootDirectory, assetDirectory, host, port, newline, separator) {
+		this.rootDirectory = rootDirectory;
+		this.assetDirectory = assetDirectory;
+		this.host = host;
+		this.port = port;
+		this.newline = newline || "\r\n";
+		this.separator = separator || "\t";
+		this.populate();
 	}
 
-	addEntry(path, menu) {
-		this.entries[path] = menu;
+	get suffix() {
+		return this.host + this.separator + this.port + this.newline;
 	}
 
-	populate(directory, gopherPath = "/") {
-		const entries = Filesystem.readdirSync(directory, { withFileTypes: true });
-		this.addEntry(gopherPath, new Menu(this.host, this.port));
+	get lastLine() {
+		return '.' + this.newline;
+	}
+	get error() {
+		return `3Sorry nothing found for that selector` + this.separator + this.suffix;
+	}
 
-		for (const entry of entries) {
-			if (!entry.name.endsWith('.json')) continue;
+	populate(directory, gopherPath) {
+		directory = directory || this.rootDirectory;
+		gopherPath = gopherPath || "/";
 
-			const [ name ] = entry.name.split('.');
-			const properties = require(Path.join(directory, entry.name));
-			this.entries[gopherPath].addEntry(name, new Entry(properties, gopherPath));
-
-			if (properties.type == EntryTypes.Directory) {
-				const childDirectory = Path.join(directory, properties.directory);
-				const childGopherPath = Path.join(gopherPath, properties.directory);
-				this.populate(childDirectory, childGopherPath);
+		let menuEntries = [];
+		const directoryEntries = Filesystem.readdirSync(directory, { withFileTypes: true });
+		for (const directoryEntry of directoryEntries) {
+			if (!directoryEntry.name.endsWith('.entry.toml')) continue;
+			const entryTOML = loadTOML(Path.join(directory, directoryEntry.name));
+			const entry = new Entry(entryTOML.properties, entryTOML.attributes, gopherPath, this.newline, this.separator);
+			menuEntries.push(entry);
+			if (entryTOML.properties.selector) {
+				this.selectors[entry.selector] = entry;
 			}
-		}
-	}
 
-	getItem(selector) {
-		if (selector == "") {
-			return {
-				type: "menu",
-				item: this.entries["/"]
-			};
-		}
-		if (this.entries[selector]) {
-			return {
-				type: "menu",
-				item: this.entries[selector]
-			};
-		}
-
-		const selectorMinusOne = selector.substring(0, selector.lastIndexOf("/")) || "/";
-
-		if (!this.entries[selectorMinusOne]) {
-			return {
-				type: "failure",
-				item: {
-					description: "Nothing found for selector"
-				}
-			};
-		}
-
-		const itemName = selector.substring(selector.lastIndexOf("/") + 1);
-		const item = this.entries[selectorMinusOne].entries[itemName];
-		if (item) {
-			return {
-				type: item.type,
-				item
+			if (entry.type == EntryTypes.Directory) {
+				const childDirectory = Path.join(directory, entryTOML.properties.target);
+				this.populate(childDirectory, entry.selector);
 			}
 		}
 
-		return {
-				type: "failure",
-				item: {
-					description: "Nothing found for selector"
-				}
-			};
+		this.menus[gopherPath] = new Menu(menuEntries, this.host, this.port, this.newline, this.separator);
+	}
 
+	query(userSelection) {
+		if (!this.selectors[userSelection]) return this.error + this.lastLine;
+		const selection = this.selectors[userSelection];
+		switch (selection.type) {
+			case EntryTypes.TextFile:
+				return Filesystem.readFileSync(Path.join(this.assetDirectory, selection.properties.target), "ascii") + this.lastLine;
+			case EntryTypes.Directory:
+				return this.menus[selection.selector].toString() + this.lastLine;
+			default:
+				return this.error + this.lastLine;
+		}
 	}
 }
 
