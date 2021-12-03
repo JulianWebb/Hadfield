@@ -1,6 +1,6 @@
 const Filesystem = require('fs');
 const Path = require('path');
-require('toml-require').install();
+const { loadTOML } = require('./toml');
 
 const defaultConfiguration = {
 	server: {
@@ -22,7 +22,7 @@ function ConfigurationConstructor(userConfigurationPath) {
 		return defaultConfiguration;
 	}
 
-	const userConfiguration = require(userConfigurationPath);
+	const userConfiguration = loadTOML(userConfigurationPath);
 	console.log(`User configuration loaded from: ${userConfigurationPath}`);
 	return {
 		gopher: {

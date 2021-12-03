@@ -1,24 +1,23 @@
-const Filesystem = require('fs');
 const Path = require('path');
 const Server = require('./server');
 const Catalogue = require('./catalogue');
-const Types = require('./types');
 
 async function GopherConstructor(configuration) {
-	const catalogue = await Catalogue({
-		documentRoot: Path.join(process.cwd(), configuration.gopher.documentRoot),
-		host: configuration.gopher.host || configuration.server.host,
-		port: configuration.gopher.port || configuration.server.port
-	});
+	const catalogue = await Catalogue(
+		Path.join(process.cwd(), configuration.gopher.documentRoot),
+		Path.join(process.cwd(), configuration.gopher.assetRoot), 
+		configuration.gopher.host || configuration.server.host,
+		configuration.gopher.port || configuration.server.port,
+		configuration.gopher.newline || '\r\n',
+		configuration.gopher.separator || '\t'
+	);
 
 	const server = await Server({
 		host: configuration.server.host,
 		port: configuration.server.port,
-		assetRoot: Path.join(process.cwd(), configuration.gopher.assetRoot)
 	});
-	const gopher = new Gopher(configuration, catalogue, server);
 
-	return gopher;
+	return new Gopher(configuration, catalogue, server);
 }
 
 class Gopher {
@@ -30,44 +29,34 @@ class Gopher {
 		this.server.on('message', this.serve.bind(this));
 	}
 	
+	error(message) {
+		const host = this.configuration.gopher.host || this.configuration.server.host;
+		const port = this.configuration.gopher.port || this.configuration.server.port;
+		return `3${message}\t\t${host}\t${port}\r\n.\r\n`;
+	}
+
 	serve(message, socket) {
 		console.log(`Incoming message: `, message);
-		if (message == "caps.txt") {
-			let response;
-			for (const key in this.capabilities) {
-				response += key + this.capabilities[key].toString() + "\r\n";
-			}
-			socket.write(response)
-				.then(socket => {})//socket.end());
-		}
-
-		if (message.startsWith("\u0009")) {
-			this.reply(`3GopherPlus not current implemented	Err	${this.host}	${this.port}`, socket);
+		if (message.includes('\t')) {
+			socket.socket.end(this.error('Gopher+ not implemented'), () => {
+				socket.socket.destroy();
+			});
 			return void 0;
 		}
 
-		const { type, item } = this.catalogue.getItem(message);
-		switch (type) {
-			case "failure":
-				this.reply(`3${item.description}	Err	${this.host}	${this.port}\r\n`, socket);
-				break;
-			case "menu":
-				this.reply(item.display, socket);
-				break;
-			case Types.TextFile:
-				let text = Filesystem.readFileSync(Path.join(this.configuration.assetRoot, item.properties.file), "utf-8");
-				this.reply(text + "\r\n", socket);
-				break;
-			default:
-				this.reply(item.entry, socket);
-				break;
+		let response;
+		if (message == "caps.txt") {
+			for (const key in this.capabilities) {
+				response += key + this.capabilities[key].toString() + "\r\n";
+			}
+		} else {
+			message = message == ""? "/": message;
+			response = this.catalogue.query(message);
 		}
-	}
 
-	reply(message, socket) {
-		socket.write(message).then(() => {
-			socket.end('.');
-		})
+		socket.socket.end(response, () => {
+			socket.socket.destroy();
+		});
 	}
 
 	async listen() {
