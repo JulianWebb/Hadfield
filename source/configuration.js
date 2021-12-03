@@ -1,6 +1,6 @@
 const Filesystem = require('fs');
 const Path = require('path');
-require('toml-require').install();
+const TOML = require('@flourd/toml');
 
 const defaultConfiguration = {
 	server: {
@@ -15,6 +15,11 @@ function configurationPath(argumentPath) {
 	return Path.join(process.cwd(), 'configuration.toml');
 }
 
+function loadTOML(path) {
+	const file = Filesystem.readFileSync(path);
+	return TOML.parse(file);
+}
+
 function ConfigurationConstructor(userConfigurationPath) {
 	userConfigurationPath = configurationPath(userConfigurationPath);
 	if (!Filesystem.existsSync(userConfigurationPath)) {
@@ -22,7 +27,7 @@ function ConfigurationConstructor(userConfigurationPath) {
 		return defaultConfiguration;
 	}
 
-	const userConfiguration = require(userConfigurationPath);
+	const userConfiguration = loadTOML(userConfigurationPath);
 	console.log(`User configuration loaded from: ${userConfigurationPath}`);
 	return {
 		gopher: {
