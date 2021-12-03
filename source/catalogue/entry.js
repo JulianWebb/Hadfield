@@ -1,37 +1,49 @@
-class Entry {
-	constructor(properties, root, seperator = '\t') {
-		this.properties = properties;
-		this.root = root;
-		this.seperator = seperator;
-	}
+const Path = require("path");
 
-	get type() {
-		return this.properties.type;
-	}
-
-	get description() {
-		return this.properties.description;
-	}
-
-	get entry() {
-		if (!this.generatedEntry) {
-			const selector = this.properties.selector? 
-			Path.join(this.root, this.properties.selector):
-			"";
-
-			switch (this.type) {
-				case Types.TextFile:
-				case Types.Directory:
-				case Types.Information:
-					this.generatedEntry = this.type + this.description + this.seperator + selector + this.seperator;
-					break;
-				default:
-					this.generatedEntry = Types.ErrorCondition + "This Entry Type is not implemented" + this.seperator + "Err" + this.seperator;
-			}
+function EntryWrapper() {
+	class Entry {
+		constructor(properties, attributes, selectorPath, newline, separator) {
+			this.properties = properties;
+			this.attributes = attributes;
+			this.selectorPath = selectorPath;
+			this.newline = newline || "\r\n";
+			this.separator = separator || "\t";
+		}
+		
+		get type() {
+			return this.properties.type;
 		}
 
-		return this.generatedEntry;
+		get description() {
+			return this.properties.description;
+		}
+
+		get selector() {
+			return this.properties.selector?
+				Path.join(this.selectorPath, this.properties.selector): "";
+		}
+
+		get weight() {
+			return this.properties.weight || 0;
+		}
+
+		get stringify() {
+			if (!this.generatedString) {
+				this.generatedString = 
+					this.type + 
+					this.description + 
+					this.separator + 
+					this.selector +
+					this.separator;
+			}
+
+			return this.generatedString;
+		}
 	}
+
+	Entry.prototype.toString = function() { return this.stringify; };
+
+	return Entry;
 }
 
-module.exports = Entry;
+module.exports = EntryWrapper();

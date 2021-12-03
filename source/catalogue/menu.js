@@ -1,32 +1,33 @@
-class Menu {
-	constructor(host, port) {
-		this.host = host;
-		this.port = port;
-		this.entries = {};
-		this.end = this.host + "\t" + this.port + "\r\n";
-	}
-
-	addEntry(name, document) {
-		this.entries[name] = document;
-	}
-
-	get display() {
-		if (!this.generatedDisplay) {
-			this.generatedDisplay = Object.keys(this.entries)
-				.sort((scooby, shaggy) => {
-					const scoobyWeight = this.entries[scooby].weight || 0;
-					const shaggyWeight = this.entries[shaggy].weight || 0;
-
-					const rawDifference = shaggyWeight - scoobyWeight;
-					const clampedDifference = Math.min(Math.max(rawDifference, -1, 1));
-					return clampedDifference;
-				}).reduce((accumulator, current) => {
-					return accumulator + this.entries[current].entry + this.end;
-				}, "");
+function MenuWrapper() {
+	class Menu {
+		constructor(entries, host, port, newline, separator) {
+			this.entries = entries;
+			this.host = host;
+			this.port = port;
+			this.newline = newline || "\r\n";
+			this.separator = separator || "\t";
 		}
 
-		return this.generatedDisplay;
+		get suffix() {
+			return this.host + this.separator + this.port + this.newline;
+		}
+
+		get stringify() {
+			if (!this.generatedString) {
+				this.generatedString = this.entries.sort((scooby, shaggy) => {
+					if (scooby.weight < shaggy.weight) return -1;
+					if (shaggy.weight > scooby.weight) return 1;
+					return 0;
+				}).reduce((accumulator, current) => accumulator + current + this.suffix, "");
+			}
+
+			return this.generatedString;
+		}
 	}
+
+	Menu.prototype.toString = function() { return this.stringify; };
+
+	return Menu;
 }
 
-module.exports = Menu;
+module.exports = MenuWrapper();
