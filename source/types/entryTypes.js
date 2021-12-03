@@ -1,4 +1,4 @@
-const Types = {
+const EntryTypes = {
 	TextFile: "0",
 	Directory: "1",
 	CSOPhoneBook: "2",
@@ -16,4 +16,4 @@ const Types = {
 	Information: "i"
 }
 
-module.exports = Types;
+module.exports = EntryTypes;
