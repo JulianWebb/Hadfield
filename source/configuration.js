@@ -1,6 +1,6 @@
 const Filesystem = require('fs');
 const Path = require('path');
-const TOML = require('@flourd/toml');
+const { loadTOML } = require('./toml');
 
 const defaultConfiguration = {
 	server: {
@@ -13,11 +13,6 @@ function configurationPath(argumentPath) {
 	if (argumentPath) return argumentPath;
 	if (process.env.CONFIGURATION_PATH) return process.env.CONFIGURATION_PATH;
 	return Path.join(process.cwd(), 'configuration.toml');
-}
-
-function loadTOML(path) {
-	const file = Filesystem.readFileSync(path);
-	return TOML.parse(file);
 }
 
 function ConfigurationConstructor(userConfigurationPath) {
