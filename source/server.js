@@ -1,9 +1,6 @@
 const { createServer } = require("net");
 const { EventEmitter } = require("stream");
 
-const NEWLINE_RN = Buffer.from('\r\n');
-const NEWLINE_N  = Buffer.from('\n');
-
 async function SocketManagerConstructor(configuration) {
 	return new SocketManager(configuration);
 }
@@ -11,22 +8,17 @@ async function SocketManagerConstructor(configuration) {
 class SocketManager extends EventEmitter {
 	constructor(configuration) {
 		super();
+
 		this.configuration = configuration;
+
 		this.server = createServer(socket => {
 			const socketHandler = new SocketHandler(socket);
-			socketHandler.socket.on("data", data => {
-				let message;
-				if (data.equals(NEWLINE_RN) || data.equals(NEWLINE_N)) {
-					message = null;
-				}
 
-				if (data.slice(-2).equals(NEWLINE_RN)) {
-					message = data.slice(0, -2).toString("ascii");
-				} else if (data.slice(-1).equals(NEWLINE_N)) {
-					message = data.slice(0, -1).toString("ascii");
-				}
+			socketHandler.socket.once("data", data => {
+				const message = stripNewlines(data).toString('ascii') || "";
 
-				return this.emit("message", message, socketHandler);
+				this.emit("message", message, socketHandler);
+				return void 0;
 			});
 
 			socketHandler.socket.on("error", error => {
@@ -35,15 +27,26 @@ class SocketManager extends EventEmitter {
 		})
 	}
 
-	async listen(port) {
+	async listen(host, port) {
+		if (arguments.length == 1) {
+			port = host;
+			host = undefined;
+		}
+
 		port = port? port: this.configuration.port;
+		host = host? host: this.configuration.host;
+
 		return new Promise((resolve, reject) => {
-			if (this.configuration.host) {
-				this.server.listen(port, this.configuration.host, resolve);
-			} else {
-				return this.server.listen(port, resolve);
+			try {
+				if (host) {
+					this.server.listen(port, host, resolve);
+				} else {
+					this.server.listen(port, resolve);
+				}
+			} catch (exception) {
+				reject(exception);
 			}
-		})
+		});
 		
 	}
 }
@@ -72,6 +75,19 @@ function SocketHandler(socket) {
 			});
 		});
 	}
+}
+
+function stripNewlines(messageBuffer) {
+	if (!messageBuffer) return messageBuffer;
+	let message = messageBuffer.toString("ascii");
+
+	if (message.endsWith(`\r\n`)) {
+		return messageBuffer.slice(0, -2);
+	} else if (message.endsWith(`\n`)) {
+		return messageBuffer.slice(0, -1);
+	}
+
+	return messageBuffer;
 }
 
 module.exports = SocketManagerConstructor;
