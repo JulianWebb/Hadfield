@@ -7,22 +7,31 @@
 	src: url('../fonts/ReadexPro.ttf');
 }
 
-$page-background: #0d1117;
-$page-text-color: #ddd;
-$page-link-color: rgb(125, 66, 180);
-$page-link-color-hover: rgb(82, 42, 119);
+$lighter-purple: #7d42b4;
+$light-purple: #522a77;
+$purple: #4B0F4D;
+$white: #FFF;
+$off-white: #DDD;
+$offer-white: #AAA;
+$off-black: #202020;
+$page-black: #161616;
 
-$menu-item-color: #ddd;
-$menu-item-color-hover: #aaa;
+$page-background: $page-black;
+$page-text-color: $off-white;
+$page-link-color: $lighter-purple;
+$page-link-color-hover: $light-purple;
 
-$sidebar-background: rgb(40, 21, 58);
+$menu-item-color: $off-white;
+$menu-item-color-hover: $offer-white;
 
-$content-background: #202020;
-$content-text-color: #ddd;
+$sidebar-background: $purple;
 
-$screen-sm-min: 1200px;//768px;
-// $screen-md-min: 992px;
-// $screen-lg-min: 1200px;
+$content-background: $off-black;
+$content-text-color: $off-white;
+
+$screen-sm-min: 768px;
+$screen-md-min: 992px;
+$screen-lg-min: 1200px;
 
 * {
 	box-sizing: border-box;
@@ -53,7 +62,7 @@ body {
 		}
 	}
 
-	@media (min-width: $screen-sm-min) {
+	@media (min-width: $screen-lg-min) {
 		margin: 16px;
 	}
 
@@ -89,7 +98,7 @@ body {
 					padding: 4px;
 				}
 
-				@media (min-width: $screen-sm-min) {
+				@media (min-width: $screen-lg-min) {
 					.title {
 						font-size: larger;
 						font-weight: bolder;
@@ -145,7 +154,7 @@ body {
 			padding: 8px;
 		}
 
-		@media (min-width: $screen-sm-min) {
+		@media (min-width: $screen-lg-min) {
 			width: 95vw;
 			margin: 0 auto;
 			
