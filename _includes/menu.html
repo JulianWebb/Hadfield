@@ -1,0 +1,16 @@
+<div class="guide-menu">
+	<div class="menu-description">Guides</div>
+	<ul>
+		{% for entry in site.guide %}
+		<li class="menu-item guide-entry{% if entry.url == page.url %} current-page{% endif %}"><a href="{{ entry.url}}">{{ entry.title }}</a></li>
+		{% endfor %}
+	</ul>
+</div>
+<div class="reference-menu">
+	<div class="menu-description">Reference</div>
+	<ul>
+	{% for entry in site.reference %}
+		<li class="menu-item reference-entry{% if entry.url == page.url %} current-page{% endif %}"><a href="{{ entry.url}}">{{ entry.title }}</a></li>
+	{% endfor %}
+	</ul>
+</div>

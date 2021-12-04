@@ -1,0 +1,187 @@
+---
+---
+@import url('./normalize.css');
+
+@font-face {
+	font-family: 'Readex Pro';
+	src: url('../fonts/ReadexPro.ttf');
+}
+
+$page-background: #0d1117;
+$page-text-color: #ddd;
+$page-link-color: rgb(125, 66, 180);
+$page-link-color-hover: rgb(82, 42, 119);
+
+$menu-item-color: #ddd;
+$menu-item-color-hover: #aaa;
+
+$sidebar-background: rgb(40, 21, 58);
+
+$content-background: #202020;
+$content-text-color: #ddd;
+
+$screen-sm-min: 1200px;//768px;
+// $screen-md-min: 992px;
+// $screen-lg-min: 1200px;
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	background-color: $page-background;
+	color: $page-text-color;
+	font-family: 'Readex Pro';
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+
+	margin: 4px;
+
+	a {
+		text-decoration: none;
+		font-weight: bolder;
+		color: $page-link-color;
+
+		&:visited {
+			color: $page-link-color;
+		}
+
+		&:hover {
+			color: $page-link-color-hover;
+		}
+	}
+
+	@media (min-width: $screen-sm-min) {
+		margin: 16px;
+	}
+
+	.page-wrapper {
+		display: flex;
+		flex-flow: row wrap;
+		justify-content: center;
+
+		.sidebar {
+			background-color: $sidebar-background;
+			flex-basis: 100%;
+			padding: 8px;
+
+			.header {
+				display: grid;
+				grid-template-columns: 1fr 2fr;
+				grid-template-rows: 1fr;
+
+				.icon {
+					background: url('../images/Gopher.svg');
+					background-size: contain;
+					background-repeat: no-repeat;
+					background-position: right;
+					width: 100%;
+					height: 100%;
+					align-self: stretch;
+				}
+
+				.title {
+					font-size: xx-large;
+					font-weight: bolder;
+					text-align: left;
+					padding: 4px;
+				}
+
+				@media (min-width: $screen-sm-min) {
+					.title {
+						font-size: larger;
+						font-weight: bolder;
+						text-align: left;
+						padding: 4px;
+					}
+				}
+			}
+			
+
+			.menu-control {
+				text-align: center;
+				button {
+					padding: 16px;
+				}
+			}
+
+			.menu {
+				display: none;
+
+				ul {
+					margin: 2px;
+
+					li.menu-item {
+						list-style: none;
+					}
+				}
+
+				a {
+					text-decoration: none;
+					font-weight: bold;
+					color: $menu-item-color;
+			
+					&:visited {
+						color: $menu-item-color;
+					}
+			
+					&:hover {
+						color: $menu-item-color-hover;
+					}
+				}
+			}
+			
+			.menu.visible {
+				display: block;
+			}
+		}
+	
+		.content {
+			background-color: $content-background;
+			color: $content-text-color;
+			flex-basis: 100%;
+			padding: 8px;
+		}
+
+		@media (min-width: $screen-sm-min) {
+			width: 95vw;
+			margin: 0 auto;
+			
+			.sidebar {
+				flex-basis: 20%;
+				padding: 16px;
+				border-top-left-radius: 16px;
+				border-bottom-left-radius: 16px;
+
+				.menu-control {
+					display: none;
+				}
+
+				.menu {
+					display: block;
+				}
+			}
+
+			.content {
+				flex-basis: 80%;
+				padding: 16px;
+			}
+		}
+	
+		
+	}
+
+	.page-footer {
+		text-align: center;
+		padding: 16px;
+
+		.copyright {
+			font-style: oblique;
+			font-weight: bold;
+		}
+	}
+
+}
+
