@@ -2,8 +2,7 @@ node_modules/
 data/
 
 .env
-*.toml
 *.sqlite
 *.db
 
-!configuration.sample.toml
+configuration.toml

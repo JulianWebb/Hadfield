@@ -1,0 +1,8 @@
+[color]
+	left = "4B0F4D"
+	right = "202020"
+	text = "DDD"
+[info]
+	description = "RFC1436 Compliant and File-Based Gopher Server"
+	icon = "icon.svg"
+	tools = [ "toml", "js", "docker" ]
