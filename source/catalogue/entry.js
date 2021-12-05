@@ -2,12 +2,16 @@ const Path = require("path");
 
 function EntryWrapper() {
 	class Entry {
-		constructor(properties, attributes, selectorPath, newline, separator) {
+		default = {};
+
+		constructor(properties, attributes, selectorPath, defaults) {
 			this.properties = properties;
 			this.attributes = attributes;
 			this.selectorPath = selectorPath;
-			this.newline = newline || "\r\n";
-			this.separator = separator || "\t";
+			this.default.host = defaults.host;
+			this.default.port = defaults.port;
+			this.newline = defaults.newline || "\r\n";
+			this.separator = defaults.separator || "\t";
 		}
 		
 		get type() {
@@ -23,6 +27,14 @@ function EntryWrapper() {
 				Path.join(this.selectorPath, this.properties.selector): "";
 		}
 
+		get host() {
+			return this.properties.host || this.default.host;
+		}
+
+		get port() {
+			return this.properties.port || this.default.port;
+		}
+
 		get weight() {
 			return this.properties.weight || 0;
 		}
@@ -34,7 +46,11 @@ function EntryWrapper() {
 					this.description + 
 					this.separator + 
 					this.selector +
-					this.separator;
+					this.separator +
+					this.host +
+					this.separator +
+					this.port +
+					this.newline;
 			}
 
 			return this.generatedString;
