@@ -1,6 +1,6 @@
-# Hadfield
+![](https://card.julianwebb.ca/julianwebb/hadfield)
 
-Hadfield is a Document-Based Gopher Server written in Javascript utilizing NodeJS.
+**Hadfield** is a Document-Based Gopher Server written in Javascript utilizing NodeJS.
 
 *Note: Hadfield is still under heavy development, until version 1.0 expect breaking changes*
 
