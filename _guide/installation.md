@@ -36,7 +36,7 @@ An example `configuration.toml` might look like:
 	port = 70
 	documentRoot = "data/documents"
 	assetRoot = "data/assets"
-	[capabilites]
+	[gopher.capabilites]
 		ServerName = "Julian's Server"
 ```
 
@@ -55,14 +55,14 @@ See the previous section for information on configuration
 ## Docker Compose
 
 Example Docker Compose:
-```yaml
+```yml
 version: "3"
 
 services:
   hadfield:
     image: ghcr.io/julianwebb/hadfield
     ports:
-      - 70:7000
+      - "70:7000"
     environment:
       CONFIGURATION_PATH: "/app/data/configuration.toml"
     volumes:
