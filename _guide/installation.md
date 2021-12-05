@@ -2,13 +2,71 @@
 layout: page
 title: Installation
 weight: 1
+lastUpdated: 2021-11-04
 ---
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Mauris a diam maecenas sed enim ut sem viverra aliquet. Et netus et malesuada fames ac turpis. Quam elementum pulvinar etiam non quam lacus suspendisse faucibus. Netus et malesuada fames ac turpis egestas sed. Vitae et leo duis ut diam. Amet tellus cras adipiscing enim eu turpis egestas. Aliquam purus sit amet luctus venenatis lectus magna fringilla urna. Fames ac turpis egestas integer. Volutpat maecenas volutpat blandit aliquam. Magna sit amet purus gravida quis blandit turpis cursus in. Varius quam quisque id diam vel. Sed tempus urna et pharetra pharetra massa. Mattis rhoncus urna neque viverra justo nec ultrices dui. Arcu dui vivamus arcu felis bibendum ut tristique et egestas. Elit sed vulputate mi sit amet. Elit eget gravida cum sociis. Pellentesque id nibh tortor id aliquet lectus proin. Facilisi etiam dignissim diam quis enim lobortis. Mi ipsum faucibus vitae aliquet nec ullamcorper.
 
-Nisl tincidunt eget nullam non nisi est sit amet facilisis. Dui nunc mattis enim ut tellus. Est velit egestas dui id ornare arcu odio ut sem. Scelerisque eleifend donec pretium vulputate sapien nec sagittis. Netus et malesuada fames ac turpis egestas maecenas. Elit sed vulputate mi sit amet mauris commodo quis imperdiet. Congue nisi vitae suscipit tellus mauris a diam. Neque ornare aenean euismod elementum nisi quis. Faucibus et molestie ac feugiat. Porta lorem mollis aliquam ut porttitor. Ultrices neque ornare aenean euismod elementum nisi quis eleifend quam. Arcu dui vivamus arcu felis bibendum ut tristique. Scelerisque mauris pellentesque pulvinar pellentesque habitant morbi tristique. Purus ut faucibus pulvinar elementum. Risus sed vulputate odio ut.
+Hadfield uses GitHub workflows to generate a new Docker image every time the main branch is updated in the git repository. The Docker image is the recommended and official method of using Hadfield.
 
-Urna nec tincidunt praesent semper feugiat nibh. Rutrum quisque non tellus orci ac auctor augue mauris augue. Ac feugiat sed lectus vestibulum mattis ullamcorper velit. Et egestas quis ipsum suspendisse ultrices. Volutpat ac tincidunt vitae semper quis lectus nulla. Adipiscing at in tellus integer feugiat. Consectetur lorem donec massa sapien faucibus et molestie ac feugiat. Ultrices mi tempus imperdiet nulla malesuada. Eu feugiat pretium nibh ipsum consequat nisl vel pretium lectus. Cursus euismod quis viverra nibh cras pulvinar. Adipiscing elit pellentesque habitant morbi tristique senectus et. Lorem donec massa sapien faucibus et molestie. Rhoncus est pellentesque elit ullamcorper. Tellus mauris a diam maecenas. Sagittis aliquam malesuada bibendum arcu vitae elementum. Turpis egestas integer eget aliquet nibh praesent tristique. Faucibus ornare suspendisse sed nisi lacus.
+{% include toc.html %}
 
-Ligula ullamcorper malesuada proin libero. Cursus eget nunc scelerisque viverra mauris in aliquam. Nullam non nisi est sit. Nulla facilisi cras fermentum odio. Lobortis scelerisque fermentum dui faucibus. Bibendum ut tristique et egestas quis ipsum suspendisse ultrices gravida. Mi eget mauris pharetra et ultrices neque ornare aenean. Blandit cursus risus at ultrices. Magna ac placerat vestibulum lectus mauris ultrices eros in. Dignissim suspendisse in est ante. Elit sed vulputate mi sit amet mauris. Vitae semper quis lectus nulla at volutpat diam ut venenatis. Sed libero enim sed faucibus turpis in eu. Feugiat scelerisque varius morbi enim nunc. Suspendisse interdum consectetur libero id faucibus nisl tincidunt. Faucibus turpis in eu mi bibendum neque egestas congue. Pellentesque adipiscing commodo elit at imperdiet dui accumsan sit.
+## Configuration
 
-Nisi lacus sed viverra tellus in. Sed ullamcorper morbi tincidunt ornare massa eget. Ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida. Ornare lectus sit amet est placerat in egestas. Proin nibh nisl condimentum id venenatis a condimentum. Amet purus gravida quis blandit turpis cursus. In ante metus dictum at. Et tortor consequat id porta nibh venenatis cras sed felis. Elementum integer enim neque volutpat. Sagittis id consectetur purus ut faucibus pulvinar elementum integer. Fusce ut placerat orci nulla pellentesque dignissim. Gravida dictum fusce ut placerat orci. Habitasse platea dictumst vestibulum rhoncus est pellentesque elit. Elit scelerisque mauris pellentesque pulvinar pellentesque. Dui faucibus in ornare quam viverra. Id interdum velit laoreet id donec ultrices tincidunt arcu non. Ac odio tempor orci dapibus ultrices in iaculis nunc. Sed arcu non odio euismod lacinia.
+Hadfield looks for a TOML configuration file at the path provided by `CONFIGURATION_PATH` and if it cannot find one then for a `configuration.toml` in the working directory.
+
+The following is a regular subset of configuration options available:
+
+**key** | **description** | **required** | **default**
+--- | --- | --- | ---
+`server.host` | The address for the server to bind to | *false* | All available
+`server.port` | The port for the server to bind to | *false* | `7000`
+`gopher.host` | The address to display on menu entries | *false* | The value of `server.host`
+`gopher.server` | The port to display on menu entries | *false* | The value of `server.port`
+`gopher.documentRoot` | The path of the TOML document directory* | **true**
+`gopher.assetRoot` | The location of the non-document file directory* | **true**
+`gopher.capabilites.*` | Properties for `caps.txt` | *false*
+
+<sup>*note: these values are relative to the working directory</sup>
+
+An example `configuration.toml` might look like:   
+```toml
+[server]
+	port = 70
+[gopher]
+	host = "julianwebb.ca"
+	port = 70
+	documentRoot = "data/documents"
+	assetRoot = "data/assets"
+	[capabilites]
+		ServerName = "Julian's Server"
+```
+
+for per document configuration see [Usage](/usage/)
+
+## Docker
+
+Hadfield can be run via the following command:
+
+`docker run -p 70:7000 -e CONFIGURATION_PATH=/app/data/configuration.toml -v ${PWD}/data:/app/data ghcr.io/julianwebb/hadfield`
+
+By default Hadfield uses port `7000` and listens on every available address.
+
+See the previous section for information on configuration
+
+## Docker Compose
+
+Example Docker Compose:
+```yaml
+version: "3"
+
+services:
+  hadfield:
+    image: ghcr.io/julianwebb/hadfield
+    ports:
+      - 70:7000
+    environment:
+      CONFIGURATION_PATH: "/app/data/configuration.toml"
+    volumes:
+      - "./data:/app/data"
+    restart: "unless-stopped"
+```
+
