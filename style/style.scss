@@ -121,6 +121,7 @@ body {
 
 				ul {
 					margin: 2px;
+					padding-left: 1em;
 
 					li.menu-item {
 						list-style: none;
@@ -204,3 +205,6 @@ body {
 
 }
 
+.code {
+	font-family: monospace;
+}
