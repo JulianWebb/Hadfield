@@ -154,6 +154,7 @@ body {
 			color: $content-text-color;
 			flex-basis: 100%;
 			padding: 8px;
+			overflow-x:scroll;
 
 			.content-header {
 				h1 {
