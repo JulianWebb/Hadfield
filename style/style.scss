@@ -152,6 +152,16 @@ body {
 			color: $content-text-color;
 			flex-basis: 100%;
 			padding: 8px;
+
+			.content-header {
+				h1 {
+					margin-bottom: 4px;
+				}
+
+				.last-updated {
+					font-style: oblique;
+				}
+			}
 		}
 
 		@media (min-width: $screen-lg-min) {
