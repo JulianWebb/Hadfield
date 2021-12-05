@@ -45,6 +45,7 @@ body {
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	tab-size: 2;
 
 	margin: 4px;
 
@@ -207,4 +208,30 @@ body {
 
 .code {
 	font-family: monospace;
+}
+
+.screen-reader-only {
+	position: absolute;
+	left: -5000px;
+
+	&:focus {
+			left: 0;
+	}
+}
+
+#markdown-toc {
+	list-style-type: square;
+	border: 1px solid $white;
+	display: inline-block;
+	padding: 1em;
+	margin-left: 1em;
+
+	&::before {
+		content: "Table of Contents";
+		font-weight: bold;
+	}
+
+	li {
+		margin-left: 1em;
+	}
 }
