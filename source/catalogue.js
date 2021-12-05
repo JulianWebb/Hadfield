@@ -4,7 +4,6 @@ const { loadTOML } = require('./toml');
 
 const EntryTypes = require('./types/entryTypes');
 
-const Menu = require('./catalogue/menu');
 const Entry = require('./catalogue/entry');
 
 async function CatalogueConstructor(rootDirectory, assetDirectory, host, port, newline, separator) {
@@ -17,10 +16,10 @@ class Catalogue {
 	selectors = {
 		'/': {
 			type: EntryTypes.Directory,
-			selector: "/"
+			target: "/"
 		}
 	};
-	menus = {};
+	menuList = {};
 
 	constructor(rootDirectory, assetDirectory, host, port, newline, separator) {
 		this.rootDirectory = rootDirectory;
@@ -47,24 +46,27 @@ class Catalogue {
 		directory = directory || this.rootDirectory;
 		gopherPath = gopherPath || "/";
 
-		let menuEntries = [];
+		this.menuList[gopherPath] = [];
+
 		const directoryEntries = Filesystem.readdirSync(directory, { withFileTypes: true });
+
 		for (const directoryEntry of directoryEntries) {
 			if (!directoryEntry.name.endsWith('.entry.toml')) continue;
+
 			const entryTOML = loadTOML(Path.join(directory, directoryEntry.name));
-			const entry = new Entry(entryTOML.properties, entryTOML.attributes, gopherPath, this.newline, this.separator);
-			menuEntries.push(entry);
+			const entry = new Entry(entryTOML.properties, entryTOML.attributes, { host: this.host, port: this.port, newline: this.newline, separator: this.separator });
+			this.menuList[gopherPath].push(entry);
+
 			if (entryTOML.properties.selector) {
 				this.selectors[entry.selector] = entry;
 			}
 
 			if (entry.type == EntryTypes.Directory) {
-				const childDirectory = Path.join(directory, entryTOML.properties.target);
+				if (this.menuList[entry.target]) continue;
+				const childDirectory = Path.join(this.rootDirectory, entry.target);
 				this.populate(childDirectory, entry.selector);
 			}
 		}
-
-		this.menus[gopherPath] = new Menu(menuEntries, this.host, this.port, this.newline, this.separator);
 	}
 
 	query(userSelection) {
@@ -72,9 +74,14 @@ class Catalogue {
 		const selection = this.selectors[userSelection];
 		switch (selection.type) {
 			case EntryTypes.TextFile:
-				return Filesystem.readFileSync(Path.join(this.assetDirectory, selection.properties.target), "ascii") + this.lastLine;
+				return Filesystem.readFileSync(Path.join(this.assetDirectory, selection.target), "ascii") + this.lastLine;
 			case EntryTypes.Directory:
-				return this.menus[selection.selector].toString() + this.lastLine;
+				const message = this.menuList[selection.target].sort((scooby, shaggy) => {
+						if (scooby.weight < shaggy.weight) return -1;
+						if (shaggy.weight > scooby.weight) return 1;
+						return 0;
+					}).reduce((accumulator, current) => accumulator + current, "");
+				return message + this.lastLine;
 			default:
 				return this.error + this.lastLine;
 		}

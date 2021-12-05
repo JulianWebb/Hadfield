@@ -4,10 +4,9 @@ function EntryWrapper() {
 	class Entry {
 		default = {};
 
-		constructor(properties, attributes, selectorPath, defaults) {
+		constructor(properties, attributes, defaults) {
 			this.properties = properties;
 			this.attributes = attributes;
-			this.selectorPath = selectorPath;
 			this.default.host = defaults.host;
 			this.default.port = defaults.port;
 			this.newline = defaults.newline || "\r\n";
@@ -23,8 +22,7 @@ function EntryWrapper() {
 		}
 
 		get selector() {
-			return this.properties.selector?
-				Path.join(this.selectorPath, this.properties.selector): "";
+			return this.properties.selector || "";
 		}
 
 		get host() {
@@ -37,6 +35,10 @@ function EntryWrapper() {
 
 		get weight() {
 			return this.properties.weight || 0;
+		}
+
+		get target() {
+			return this.properties.target;
 		}
 
 		get stringify() {
