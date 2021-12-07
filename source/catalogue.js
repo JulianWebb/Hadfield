@@ -64,7 +64,7 @@ class Catalogue {
 			if (entry.type == EntryTypes.Directory) {
 				if (this.menuList[entry.target]) continue;
 				const childDirectory = Path.join(this.rootDirectory, entry.target);
-				this.populate(childDirectory, entry.selector);
+				this.populate(childDirectory, entry.target);
 			}
 		}
 	}
@@ -72,6 +72,7 @@ class Catalogue {
 	query(userSelection) {
 		if (!this.selectors[userSelection]) return this.error + this.lastLine;
 		const selection = this.selectors[userSelection];
+		
 		switch (selection.type) {
 			case EntryTypes.TextFile:
 				return Filesystem.readFileSync(Path.join(this.assetDirectory, selection.target), "ascii") + this.lastLine;
