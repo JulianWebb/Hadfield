@@ -87,6 +87,10 @@ class Catalogue {
 				return this.error + this.lastLine;
 		}
 	}
+
+	selectorExists(userSelection) {
+		return !!this.selectors[userSelection];
+	}
 }
 
 module.exports = CatalogueConstructor;
