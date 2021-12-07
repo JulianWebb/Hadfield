@@ -45,10 +45,11 @@ class Gopher {
 		}
 
 		let response;
-		if (message == "caps.txt") {
+		if (message == "caps.txt" && !this.catalogue.selectorExists(message)) {
 			for (const key in this.capabilities) {
 				response += key + this.capabilities[key].toString() + "\r\n";
 			}
+			
 		} else {
 			message = message == ""? "/": message;
 			response = this.catalogue.query(message);
