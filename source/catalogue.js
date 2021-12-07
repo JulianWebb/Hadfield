@@ -75,7 +75,7 @@ class Catalogue {
 		
 		switch (selection.type) {
 			case EntryTypes.TextFile:
-				return Filesystem.readFileSync(Path.join(this.assetDirectory, selection.target), "ascii") + this.lastLine;
+				return Filesystem.readFileSync(Path.join(this.assetDirectory, selection.target), "ascii") + this.newline + this.lastLine;
 			case EntryTypes.Directory:
 				const message = this.menuList[selection.target].sort((scooby, shaggy) => {
 						if (scooby.weight < shaggy.weight) return -1;
@@ -86,6 +86,10 @@ class Catalogue {
 			default:
 				return this.error + this.lastLine;
 		}
+	}
+
+	selectorExists(userSelection) {
+		return !!this.selectors[userSelection];
 	}
 }
 

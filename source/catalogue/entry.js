@@ -41,7 +41,14 @@ function EntryWrapper() {
 			return this.properties.target;
 		}
 
+		get visible() {
+			return this.properties.hasOwnProperty('visible')? this.properties.visible: true;
+		}
+
 		get stringify() {
+			console.log(this.target, this.visible)
+			if (this.visible == false) return "butts";
+
 			if (!this.generatedString) {
 				this.generatedString = 
 					this.type + 
